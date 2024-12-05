@@ -1,0 +1,8 @@
+[submodule "p44-open/openwrt/openwrt"]
+	path = openwrt
+	url = https://git.openwrt.org/openwrt/openwrt.git
+	branch = openwrt-22.03
+[submodule "p44-open/p44build/p44build"]
+	path = p44build
+	url = https://github.com/plan44/p44build.git
+	branch = main
