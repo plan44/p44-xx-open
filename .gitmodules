@@ -6,3 +6,6 @@
 	path = p44build
 	url = https://github.com/plan44/p44build.git
 	branch = main
+[submodule "omega2flash"]
+	path = omega2flash
+	url = https://github.com/plan44/omega2flash.git
