@@ -4,7 +4,10 @@
 
 In short: this P44-XX-OPEN repository collects the resources (mostly as submodules) which allow to build OpenWrt/Linux firmware images configured as a **ready-to-use controller platform for cool, (home) automatable things** with addressable SmartLEDs, motors, sensors, GPIOs and much more.
 
-The github repo also contains read-to-use [release images](https://github.com/p44-xx-open/releases/latest).
+Note: this github repo also contains ready-to-use [release images](https://github.com/plan44/p44-xx-open/releases/latest).
+
+![P44-mini-LX with Omega2, Omega2+Dock+Ethernet Extension, RaspberryPi B+](readme_assets/omega2%2Braspberry%2Ejpeg)
+
 
 ## Playing with LEDs is possibly in many other ways. What is special in the P44-XX-OPEN?
 
@@ -27,27 +30,29 @@ While the parts have been published as OpenSource all the way (e.g. the main aut
 
 This is what I now call P44-XX-OPEN and can be built and extended from this repo as a starting point.
 
-# Install the pre- or self-built firmware images on a Omega2 or a Raspberry Pi
+# <a id="install"></a>Install the pre- or self-built firmware images on a Omega2 or a Raspberry Pi
+
+Note: see [below](#build) for instructions on how to *build* these images yourselves.
 
 ## Install on Omega2
 
 If OpenWrt (OnionOS for example) is already running on the device, you can cross-grade to the p44-xx-diy using `sysupgrade`:
 
-- visit [p44-xx-open github releases](https://github.com/p44-xx-open/releases/latest) to find the version number of the latest release
+- visit [p44-xx-open github releases](https://github.com/plan44/p44-xx-open/releases/latest) to find the version number of the latest release
 
 - log in to your Omega2 and download/install the image
 
     ```bash
     # get the release (replace vXX in the URL below with actual version number)
     cd /tmp
-    wget https://github.com/p44-xx-open/releases/latest/download/p44-xx-diy-vXX-ramips-mt76x8-sysupgrade.bin
+    wget https://github.com/plan44/p44-xx-open/releases/latest/download/p44-xx-diy-vXX-ramips-mt76x8-sysupgrade.bin
     # when download was successful: cross-upgrade to p44-xx-diy
     sysupgrade -F -n /tmp/p44-xx-diy-*
     ```
         
 You can also use the Omega2 bootloader's "web recovery" mechanism on the omega2 dock + ethernet extension or with any other Omega2 setup with Ethernet and a way to pull up GPIO38, e.g. the [p44-mini-lx](https://github.com/plan44/p44-mini-lx)
 
-- download the latest `p44-xx-diy-vXX-ramips-mt76x8-sysupgrade` (vXX = version number) from [github releases](https://github.com/p44-xx-open/releases/latest)
+- download the latest `p44-xx-diy-vXX-ramips-mt76x8-sysupgrade` (vXX = version number) from [github releases](https://github.com/plan44/p44-xx-open/releases/latest)
 - connect the dock to your LAN with ethernet
 - also connect serial/usb console, hold the reset button on Omega dock at powerup, type 0 at the menu
 - bring your computer into the `192.168.8.0/24` subnet (e.g. set it to a fixed IP of 192.168.8.3)
@@ -55,18 +60,19 @@ You can also use the Omega2 bootloader's "web recovery" mechanism on the omega2 
 
 ## <a id="flash_rpi"></a>Create SD-Card for RaspberryPi
 
-- On your computer download the latest release from [p44-xx-open github releases](https://github.com/p44-xx-open/releases/latest)
+- On your computer download the latest release from [p44-xx-open github releases](https://github.com/plan44/p44-xx-open/releases/latest)
     - For RaspberryPi B/B+: `p44-xx-diy-vXX-bcm27xx-bcm2708-rpi-sysupgrade.img.gz` (vXX = version number) 
     - For RaspberryPi 2,3,4: `p44-xx-diy-vXX-bcm27xx-bcm2709-rpi-2-squashfs-sysupgrade.img.gz` (vXX = version number)
 
 - Unzip the image to get the uncompressed image file
     ```bash
-    gzip -f -d -k p44-xx-diy-vXX-bcm*.img.gz
+    gzip -f -d -k p44-xx-diy-*.img.gz
+    # might complain about "trailing garbage"
     ```
 
 - Flash the `.img` onto a SD card (`dd` from the command line if you know what you are doing, or GUI tools like Etcher).
 
-Note: some tools (e.g RaspberrPi Imager) might be unhappy (will fail) with images that are not sized an integer multiple of 512 bytes, which is often the case with these OpenWrt images.
+    Note: some tools (e.g RaspberrPi Imager) might be unhappy (will fail) with images that are not sized an integer multiple of 512 bytes, which is often the case with these OpenWrt images.
 
 # <a id="run"></a>Start using P44-XX-DIY
 
@@ -80,8 +86,8 @@ Note: some tools (e.g RaspberrPi Imager) might be unhappy (will fail) with image
 
 ### Finding the WebUI in the LAN
 
-- The device dvertises its Web UI and ssh port via DNS-SD (Zeroconfig/Bonjour/Avahi). So if you have a DNS-SD browsing tool like [Localsites](https://apps.apple.com/us/app/localsites/id1289088707)(macOS, CHF 1.- to me ;-), [Discovery - DNS-SD Browser](https://apps.apple.com/ch/app/discovery-dns-sd-browser/id1381004916)(macOS, free), *Avahi Zeroconf Browser* (Linux), you'll find the device with those.
-- On Linux with avahi installed, you can also use the command line:
+- The device advertises its Web UI and ssh port via DNS-SD (Zeroconfig/Bonjour/Avahi). So if you have a DNS-SD browsing tool like [Localsites](https://apps.apple.com/us/app/localsites/id1289088707) (macOS, CHF 1.- to me ;-), [Discovery - DNS-SD Browser](https://apps.apple.com/ch/app/discovery-dns-sd-browser/id1381004916) (macOS, free), *Avahi Zeroconf Browser* (Linux), you'll find the device with those.
+- On systems with avahi installed (most linux distros), you can also use the command line:
     ```bash
     avahi-browse -t -r _http._tcp
     ```
@@ -96,8 +102,10 @@ Note: some tools (e.g RaspberrPi Imager) might be unhappy (will fail) with image
         port = [80]
         txt = ["path=/index.html"]
     ```
-- If you have access to your LAN's DHCP server's client list, you'll see the device there
-- On Windows, it should be visible in the network environment, as it uses `u2npnd` to advertise itself via UPnP.
+
+- On Windows, the P44-XX-DIY should be visible in the network environment, as it uses `u2npnd` to advertise itself via UPnP.
+- As a fallback when everything else fails, and you have access to your LAN's DHCP server's client list - you'll learn the IP from there.
+- And finally, you can use the console (see below) to login and type `ip addr`.
 
 ### Logging into the webUI
 - The webui has a http auth login, which is set to user and password both `p44lcadmin` by default. **It is strongly recommended to set your own webUI password as one of the first actions!** There is a button in the WebUI for doing that.
@@ -111,7 +119,12 @@ Note: some tools (e.g RaspberrPi Imager) might be unhappy (will fail) with image
 ### Acessing the console
 - if you have access to the console (HDMI screen + USB keyboard on the RaspberryPi, USB/UART connection on the Omega2), you can just press enter to get a root shell. **It is strongly recommended to set a password as one of the first actions!** 
 
-## More information
+## Some First steps (Suggestions)
+- Grab a WS2813 addressable LED strip, connect to 5V power, and connect the DIN data line to GPIO18 (pin10) of the RaspberryPi. On the Omega2, connect DIN to GPIO46 (but you might get flicker without a 3.3V->5V level shifter in between). Then, in the WebUI, go to "Hardware", click "+Device" in the "P44-XX-DIY Smart LED Chains" row, and define your first full color LED device.
+- If you have hue lights and a hue bridge in the same LAN as the P44-XX-DIY - why not add the hues as lights? In the "Hardware" tab, just click "Device learn in/out...", then press the button on the hue bridge - and you'll have the hues connected.
+- Connect a LED or relay or Rocket launcher to one of the GPIOs, and use the "+Device" button on the "P44-XX-DIY GPIO,I2C,console" row in the "Hardware" tab to make this GPIO a output or input device (complete with debouncing, long-press for dimming etc.)
+
+## More information and documentation
 
 As the P44-XX-OPEN is identical (except no dependencies on plan44 infrastructure: no updater, no reverse proxy) to the [free P44-LC-X images](https://plan44.ch/automation/p44-lc-x.php) or generally the entire [plan44 product palette](https://plan44.ch/automation), the documentation applies to all of these likewise.
 
@@ -125,10 +138,10 @@ Good starting points:
 
 - The [tech docs](https://plan44.ch/p44-techdocs/) cover all details about the built-in scripting language, the SmartLED graphics subsystem *p44lrgraphics* and much more.
 
-- There's also a [community forum](https://forum.plan44.ch/t/p44-xx-x-diy-maker) for asking and answering questions.
+- **There's also a [community forum](https://forum.plan44.ch/t/p44-xx-x-diy-maker) for asking and answering questions.**
 
 
-# How to build the P44-xx-open firmware images based on OpenWrt
+# <a id="build"></a>How to build the P44-xx-open firmware images based on OpenWrt
 
 ## Preparations
 
