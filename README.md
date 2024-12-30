@@ -8,6 +8,7 @@ Note: this github repo also contains ready-to-use [release images](https://githu
 
 ![P44-mini-LX with Omega2, Omega2+Dock+Ethernet Extension, RaspberryPi B+](readme_assets/omega2%2Braspberry%2Ejpeg)
 
+At [38c3](https://media.ccc.de/c/38c3) I had the opportunity to give a [lightning talk](https://media.ccc.de/v/38c3-lightning-talks-tag-3) (at around 1h30 in the video), here is the slightly updated [final version of the PDF slides](readme_assets/38c3-lightning-talk-slides.pdf) that did not make it into the talk.
 
 ## Playing with LEDs is possibly in many other ways. What is special in the P44-XX-OPEN?
 
