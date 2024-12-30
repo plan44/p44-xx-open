@@ -10,7 +10,7 @@ Note: this github repo also contains ready-to-use [release images](https://githu
 
 At [38c3](https://media.ccc.de/c/38c3) I had the opportunity to give a [lightning talk](https://media.ccc.de/v/38c3-lightning-talks-tag-3) (at around 1h30 in the video), here is the slightly updated [final version of the PDF slides](readme_assets/38c3-lightning-talk-slides.pdf) that did not make it into the talk.
 
-## Playing with LEDs is possibly in many other ways. What is special in the P44-XX-OPEN?
+## Playing with LEDs is possible in many other ways. What is special in the P44-XX-OPEN?
 
 Basically, P44-XX-OPEN is the toolbox I found necessary to be able to develop and maintain lighting and automation projects efficiently - while strictly avoiding spreading technical debt that would haunt me more and more with every additional project ;-)
 
@@ -63,7 +63,7 @@ You can also use the Omega2 bootloader's "web recovery" mechanism on the omega2 
 
 - On your computer download the latest release from [p44-xx-open github releases](https://github.com/plan44/p44-xx-open/releases/latest)
     - For RaspberryPi B/B+: `p44-xx-diy-vXX-bcm27xx-bcm2708-rpi-sysupgrade.img.gz` (vXX = version number) 
-    - For RaspberryPi 2,3,4: `p44-xx-diy-vXX-bcm27xx-bcm2709-rpi-2-squashfs-sysupgrade.img.gz` (vXX = version number)
+    - For RaspberryPi 2,3,4: `p44-xx-diy-vXX-bcm27xx-bcm2709-rpi-2-sysupgrade.img.gz` (vXX = version number)
 
 - Unzip the image to get the uncompressed image file
     ```bash
@@ -325,7 +325,7 @@ At this time, three target configs/setups are available
 ./p44b build
 
 # or, if you have multiple CPU cores you want to use (5, here)
-# to speed up things, allow parallelizing jobs (here for MBA15-2023, which has 8):
+# to speed up things, allow parallelizing jobs
 ./p44b build -j 5
 ```
 
