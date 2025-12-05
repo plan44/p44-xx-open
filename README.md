@@ -146,6 +146,33 @@ Good starting points:
 
 ## Preparations
 
+### use docker
+
+There is a dockerfile at the root of the project that can build a docker image for building P44-XX-OPEN images.
+
+#### build the builder image yourself
+
+You need to have docker with CLI installed, then:
+
+```bash
+cd my_checkout_dir
+# choose target (for which the builder will be created)
+TARGET=omega2
+#TARGET=raspberrypi-1
+#TARGET=raspberrypi-2
+# build the openwrt environment ready to create p44-xx-open images
+docker build --build-arg TARGET=${TARGET}  -t p44-xx-open .
+```
+
+#### use the dockerized builder
+
+```bash
+# get interactive shell to actually configure and build your p44-xx-open image
+docker run -it p44-xx-open
+```
+
+
+
 ### prerequisites for OpenWrt on Linux (Debian 11, 12)
 
 Install packages [according to OpenWrt Wiki](https://openwrt.org/docs/guide-developer/toolchain/install-buildsystem#debianubuntu):
@@ -388,7 +415,7 @@ Images built for RaspberryPi B/B+ are called something like:
 Grab the correct image from `bin/targets/bcm27xx/bcm270` (B,B+) or `bin/targets/bcm27xx/bcm2709` (2,3,4) and then proceed as described [in the image installation instructions above](#flash_rpi).
 
 
-### Run the P44-XX-DIY
+### Run the P44-XX-OPEN
 
 See section "[Start using P44-XX-DIY](#run)" above.
 
