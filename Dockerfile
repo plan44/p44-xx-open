@@ -1,4 +1,5 @@
-ARG PROJROOT=/p44-xx-open
+ARG BUILDUSER=builder
+ARG PROJDIR=p44-xx-open
 ARG BRANCH=main
 ARG OPENWRT_VERSTAG=v22.03.5
 ARG GITHOSTROOT=https://github.com/plan44
@@ -11,6 +12,8 @@ ARG TARGET=omega2
 
 FROM debian:11 AS base
 
+ARG BUILDUSER
+
 RUN apt-get update && apt-get install -y \
     git quilt \
     build-essential clang \
@@ -20,14 +23,23 @@ RUN apt-get update && apt-get install -y \
     file wget quilt \
     python2.7-dev
 
+# non-root build user (will be used in later stages)
+RUN useradd -m -u 1000 ${BUILDUSER}
 
 # Get P44-XX-OPEN
 
 FROM base AS basep44
 
+ARG BUILDUSER
+ARG PROJDIR
 ARG BRANCH
-ARG PROJROOT
 ARG GITHOSTROOT
+
+# - set up build environment
+USER ${BUILDUSER}
+
+ENV HOME=/home/${BUILDUSER}
+ENV PROJROOT=${HOME}/${PROJDIR}
 
 ENV GIT_SRC=${GITHOSTROOT}/p44-xx-open
 ENV BRANCH=${BRANCH}
@@ -45,7 +57,6 @@ RUN cd ${PROJROOT} && \
 
 FROM basep44 AS openwrtp44
 
-ARG PROJROOT
 ARG OPENWRT_VERSTAG
 ARG GITHOSTROOT
 
@@ -75,22 +86,15 @@ RUN ./p44b prepare && \
 
 FROM openwrtp44 AS targetp44
 
-ARG PROJROOT
-ARG OPENWRT_VERSTAG
-ARG GITHOSTROOT
 ARG TARGET
 
 WORKDIR ${PROJROOT}/openwrt
 
 RUN ./p44b target ${TARGET}
 
+RUN ./p44b build tools/install
 
-#
-# RUN ./p44b build tools/install
-#
-# RUN ./p44b build toolchain/install
-#
-#
+RUN ./p44b build toolchain/install
 
 
 # By default, let us use the environment from bash, manually
