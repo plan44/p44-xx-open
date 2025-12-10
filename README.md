@@ -104,7 +104,7 @@ You can also use the Omega2 bootloader's "web recovery" mechanism on the omega2 
         txt = ["path=/index.html"]
     ```
 
-- On Windows, the P44-XX-DIY should be visible in the network environment, as it uses `u2npnd` to advertise itself via UPnP.
+- On Windows, the P44-XX-DIY should be visible in the network environment, as it uses `u2pnpd` to advertise itself via UPnP.
 - As a fallback when everything else fails, and you have access to your LAN's DHCP server's client list - you'll learn the IP from there.
 - And finally, you can use the console (see below) to login and type `ip addr`.
 
@@ -123,11 +123,11 @@ You can also use the Omega2 bootloader's "web recovery" mechanism on the omega2 
 ## Some First steps (Suggestions)
 - Grab a WS2813 addressable LED strip, connect to 5V power, and connect the DIN data line to GPIO18 (pin10) of the RaspberryPi. On the Omega2, connect DIN to GPIO46 (but you might get flicker without a 3.3V->5V level shifter in between). Then, in the WebUI, go to "Hardware", click "+Device" in the "P44-XX-DIY Smart LED Chains" row, and define your first full color LED device.
 - If you have hue lights and a hue bridge in the same LAN as the P44-XX-DIY - why not add the hues as lights? In the "Hardware" tab, just click "Device learn in/out...", then press the button on the hue bridge - and you'll have the hues connected.
-- Connect a LED or relay or Rocket launcher to one of the GPIOs, and use the "+Device" button on the "P44-XX-DIY GPIO,I2C,console" row in the "Hardware" tab to make this GPIO a output or input device (complete with debouncing, long-press for dimming etc.)
+- Connect a LED or relay or satellite launcher to one of the GPIOs, and use the "+Device" button on the "P44-XX-DIY GPIO,I2C,console" row in the "Hardware" tab to make this GPIO a output or input device (complete with debouncing, long-press for dimming etc.)
 
 ## More information and documentation
 
-As the P44-XX-OPEN is identical (except no dependencies on plan44 infrastructure: no updater, no reverse proxy) to the [free P44-LC-X images](https://plan44.ch/automation/p44-lc-x.php) or generally the entire [plan44 product palette](https://plan44.ch/automation), the documentation applies to all of these likewise.
+As the P44-XX-OPEN is identical (except no dependencies on plan44 infrastructure: no updater, no reverse proxy) to the [free P44-LC-X images](https://plan44.ch/automation/p44-lc-x.php) or generally similar to the entire [plan44 product palette](https://plan44.ch/automation), the documentation applies to all of these likewise.
 
 Good starting points:
 
@@ -142,36 +142,67 @@ Good starting points:
 - **There's also a [community forum](https://forum.plan44.ch/t/p44-xx-x-diy-maker) for asking and answering questions.**
 
 
-# <a id="build"></a>How to build the P44-xx-open firmware images based on OpenWrt
+# <a id="docker"></a>Docker image for building OpenWrt-based P44-xx-open firmware
 
-## Preparations
+There is a dockerfile at the root of the project that can build a docker image ready for building P44-XX-OPEN images. It does the same things as [described below for manually setting up the build environment and build an image](#build).
 
-### use docker
+#### download pre-built docker image from 
 
-There is a dockerfile at the root of the project that can build a docker image for building P44-XX-OPEN images.
+To save the (quite long) build time, you can download a pre-built docker image:
 
-#### build the builder image yourself
+_tbd._
+
+#### build the builder docker image yourself
+
+First, clone the "umbrella" repo (if you didn't already). You don't need the submodules, as the docker image build process will pull them within docker:
+
+```bash
+git clone https://github.com/plan44/p44-xx-open
+```
 
 You need to have docker with CLI installed, then:
 
 ```bash
-cd my_checkout_dir
-# choose target (for which the builder will be created)
+cd p44-xx-open
+
+# choose target (for which the builder and image will be created)
 TARGET=omega2
 #TARGET=raspberrypi-1
 #TARGET=raspberrypi-2
+
 # build the openwrt environment ready to create p44-xx-open images
+# including a first build-through of the standard p44-xx-open image
 docker build --build-arg TARGET=${TARGET}  -t p44-xx-open .
 ```
 
+This first builds the openwrt toolchain and then the image for the selected `TARGET`.
+Note that this does take well over an hour to complete on a M2 MacBook Air (not a slow machine).
+
 #### use the dockerized builder
+
+Once the docker image is built, you can enter it and you will find the built image in `/home/builder/p44-xx-open/openwrt/bin/...`. You can install it as described [above](#install) (maybe copy it out of the container with `docker cp ...`).
+
+To use it interactively without loosing work, run a named container, so you can enter it later again with `docker start` or `docker exec`.
 
 ```bash
 # get interactive shell to actually configure and build your p44-xx-open image
-docker run -it p44-xx-open
+docker run -it --name my-p44-xx-builder p44-xx-open
+
+# start another shell while container is up
+docker exec -it my-p44-xx-builder /bin/bash
+
+# restart the container after it was stopped
+docker start my-p44-xx-builder
 ```
 
+With the standard p44-xx-open image already built, you can incrementally tweak the image to your liking, for example with `./p44b make menuconfig`, and rebuilds will be quicker because all basics are already built. (`p44b` is a helper script that simplifies managing openwrt builds that are more customized than menuconfig allows, see [here for an overview](https://github.com/plan44/p44build) and [below](#p44b) for example usage)
 
+
+# <a id="build"></a>Manual steps to setup OpenWrt build environment for P44-xx-open firmware images
+
+**Note:** these are the same steps that are automated in the [Dockerfile as described above](#docker).
+
+## Preparations
 
 ### prerequisites for OpenWrt on Linux (Debian 11, 12)
 
@@ -221,6 +252,14 @@ python2.7-dev
    mkdir ~/bin
    ln -s /opt/homebrew/bin/gmake ~/bin/make
    ```
+
+### Clone the repo
+
+(if you're not already reading this README from your cloned repo, that is...)
+
+```bash
+git clone https://github.com/plan44/p44-xx-open
+```
 
 ### Submodules
 
@@ -278,7 +317,7 @@ git fetch --unshallow
 popd
 ```
 
-## Initialize p44b(uild) for P44-xx
+## <a id="p44b"></a>Initialize p44b(uild) for P44-xx
 
 ### Direct p44b to the information that will control everything
 
@@ -359,6 +398,8 @@ At this time, three target configs/setups are available
 **Note:** when doing this for the first time, it takes a looooong time (hours). This is because initial OpenWrt build involves creating the compiler toolchain, and the complete linux kernel and tools. Subsequent builds will be much faster.
 
 If everything went well, the OpenWrt build process will have produced a firmware image in `bin/targets/ramips/mt76x8` for the Omega2 as selected above - for RaspberryPi it will be `bin/targets/bcm27xx/bcm270` (B,B+) and `bin/targets/bcm27xx/bcm2709` (2,3,4).
+
+**Note:** this is the same state you'll also get as a starting point when using the [docker image](#docker).
 
 ## Install built image
 

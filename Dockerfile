@@ -96,6 +96,20 @@ RUN ./p44b build tools/install
 
 RUN ./p44b build toolchain/install
 
+# - in case we enter at that stage
+WORKDIR ${PROJROOT}/openwrt
+CMD ["bash"]
+
+
+# Build the p44-xx-open image
+
+FROM targetp44 AS imagep44
+
+WORKDIR ${PROJROOT}/openwrt
+
+# fully verbose, so we'll have the logs when something goes wrong
+RUN ./p44b build V=s
+
 
 # By default, let us use the environment from bash, manually
 
