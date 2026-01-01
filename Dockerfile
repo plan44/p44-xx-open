@@ -1,6 +1,6 @@
 ARG BUILDUSER=builder
 ARG PROJDIR=p44-xx-open
-ARG BRANCH=main
+ARG BRANCH=p44-xx-diy-v1.8.2.42
 ARG OPENWRT_VERSTAG=v22.03.5
 ARG GITHOSTROOT=https://github.com/plan44
 #ARG GITHOSTROOT=https://codeberg.org/plan44
