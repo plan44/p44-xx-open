@@ -146,11 +146,33 @@ Good starting points:
 
 There is a dockerfile at the root of the project that can build a docker image ready for building P44-XX-OPEN images. It does the same things as [described below for manually setting up the build environment and build an image](#build).
 
-#### download pre-built docker image from 
+## download pre-built docker image from github container registry (ghcr.io)
 
-To save the (quite long) build time, you can download a pre-built docker image:
+To save the (quite long) build time, you can download pre-built docker images from github.
 
-_tbd._
+```bash
+# choose target platform (Note: raspberrypi-2 is for all Rpi's from 2 up: 2, 2B, 3, 3b, 4)
+TARGET=omega2
+#TARGET=raspberrypi-1
+#TARGET=raspberrypi-2
+
+# pull the image
+docker pull ghcr.io/plan44/p44-xx-open-${TARGET}:latest
+
+# run it (named, persisting state, so you can exit and re-enter)
+docker run -it --name ${TARGET}-build ghcr.io/plan44/p44-xx-open-${TARGET}:latest
+# run it with a bind-mount so we can share data (for example copy out built images)
+docker run -it --name ${TARGET}-build -v "$PWD:/work"  ghcr.io/plan44/p44-xx-open-${TARGET}:latest
+```
+
+At this point, you will get a shell at the openwrt root build dir, with the standard p44-xx-open image already built and available in `bin/target/...`.
+
+This is where you can for example invoke the openwrt menuconfig with `./p44b make menuconfig` and afterwards rebuild the firmware image with `./p44b build`, etc. 
+The container stops when you exit the shell, you can re-start it with:
+
+```
+docker start -ai ${TARGET}-build
+```
 
 #### build the builder docker image yourself
 
@@ -172,7 +194,7 @@ TARGET=omega2
 
 # build the openwrt environment ready to create p44-xx-open images
 # including a first build-through of the standard p44-xx-open image
-docker build --build-arg TARGET=${TARGET}  -t p44-xx-open .
+docker build --build-arg TARGET=${TARGET} -t p44-xx-open-${TARGET} .
 ```
 
 This first builds the openwrt toolchain and then the image for the selected `TARGET`.
