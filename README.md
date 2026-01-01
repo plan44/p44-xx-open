@@ -4,11 +4,13 @@
 
 In short: this P44-XX-OPEN repository collects the resources (mostly as submodules) which allow to build OpenWrt/Linux firmware images configured as a **ready-to-use controller platform for cool, (home) automatable things** with addressable SmartLEDs, motors, sensors, GPIOs and much more.
 
-Note: this github repo also contains ready-to-use [release images](https://github.com/plan44/p44-xx-open/releases/latest).
+Note: this github repo also contains ready-to-use [release images](https://github.com/plan44/p44-xx-open/releases/latest), as well as [docker images](https://github.com/plan44?tab=packages&repo_name=p44-xx-open) with complete openwrt build environments for creating your own customized images.
 
 ![P44-mini-LX with Omega2, Omega2+Dock+Ethernet Extension, RaspberryPi B+](readme_assets/omega2%2Braspberry%2Ejpeg)
 
 At [38c3](https://media.ccc.de/c/38c3) I had the opportunity to give a [lightning talk](https://media.ccc.de/v/38c3-lightning-talks-tag-3) (at around 1h30 in the video), here is the slightly updated [final version of the PDF slides](readme_assets/38c3-lightning-talk-slides.pdf) that did not make it into the talk.
+
+At [39c3](https://media.ccc.de/c/39c3), a P44-xx-open based LED band showed a smooth ticker with a wandering flare effect as an eye catcher for [Digitale Gesellschaft Schweiz](https://www.digitale-gesellschaft.ch), see image further below.
 
 ## Playing with LEDs is possible in many other ways. What is special in the P44-XX-OPEN?
 
@@ -20,6 +22,9 @@ This boils down to:
 - **longterm maintainability** - project specifics (all settings, scripting) are strictly separated from the platform itself, can be saved as a single file of only few KBytes size. The archived settings can be restored on the same or different hardware, on the same or future firmware versions. The built-in JS-like p44script language is precisely tuned for automation, so project logic can be laid down in small, easy to understand scripts, and debugged on-device with the built-in IDE.
 - **home automation compatibility** - while there's no need to use that part, the P44-xx is based on a solid device model, featuring all the basic mechanisms like rooms/zones, groups, scenes and triggers (automations) to structure a home installation. It even contains a matter bridge, so any cool LED thingie you are building can become a luminaire in a matter SmartHome with a few clicks.
 - **full featured Linux but still efficiently 24/7 suitable, thanks to OpenWrt** - while OpenWrt is a Linux based distribution with a wide selection of tools, as a network router OS it is tailored for 24/7 operation, has focus on secure network tooling, supports factory reset, strictly avoids unnecessary flash writes and has a very small footprint (fits in 16Mbytes of flash - yes, mega, not giga!).
+
+![p44-xx-open-at-39c3](readme_assets/p44-xx-open-at-39c3.jpeg)
+
 
 ## How did it come to be? And why only now?
 
